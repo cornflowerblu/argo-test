@@ -1,0 +1,25 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: argocd-gateway
+  namespace: argocd
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - argocd.itsovertime.com
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+    tls:
+      httpsRedirect: true
+  - hosts:
+    - argocd.itsovertime.com # Change this to your domain
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      mode: PASSTHROUGH

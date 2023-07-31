@@ -1,0 +1,53 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    field.cattle.io/publicEndpoints: >-
+      [{"addresses":[""],"port":80,"protocol":"HTTP","serviceName":"default:web","ingressName":"default:web-ingress","hostname":"apache.itsovertime.com","path":"/","allNodes":false}]
+  creationTimestamp: '2023-07-31T00:58:16Z'
+  generation: 4
+  managedFields:
+    - apiVersion: networking.k8s.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:status:
+          f:loadBalancer:
+            f:ingress: {}
+      manager: nginx-ingress
+      operation: Update
+      subresource: status
+      time: '2023-07-31T00:58:16Z'
+    - apiVersion: networking.k8s.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:field.cattle.io/publicEndpoints: {}
+        f:spec:
+          f:ingressClassName: {}
+          f:rules: {}
+      manager: agent
+      operation: Update
+      time: '2023-07-31T00:58:36Z'
+  name: web-ingress
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: apache.itsovertime.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: web
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+status:
+  loadBalancer:
+    ingress:
+      - hostname: >-
+          a98fef41c3aea4ddf95bdbd1f3918867-570088e2bd46bf5e.elb.us-west-2.amazonaws.com

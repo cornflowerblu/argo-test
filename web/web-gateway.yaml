@@ -1,0 +1,24 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: web-routes-weighted
+  namespace: default
+spec:
+  hosts:
+  - apache.itsovertime.com
+  gateways:
+    - mesh
+  http:
+    - name: "v1/v2 routes"
+      route:
+      - destination:
+          host: web.default.svc.cluster.local
+          port:
+            number: 80
+        weight: 50  
+      - destination:
+          host: web2.default.svc.cluster.local
+          port:
+            number: 80
+        weight: 50
