@@ -110,8 +110,6 @@ metadata:
       kind: ReplicaSet
       name: web-664b7d957d
       uid: 0b1ab6b6-ccd8-44db-8346-385a3d5b7124
-  resourceVersion: '86313'
-  uid: 8477cf07-a78c-43a3-9730-a930abc5e4b3
 spec:
   affinity: {}
   containers:
