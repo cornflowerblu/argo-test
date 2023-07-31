@@ -472,8 +472,6 @@ metadata:
       time: '2023-07-31T02:06:50Z'
   name: web-route
   namespace: default
-  resourceVersion: '108737'
-  uid: c2d4f9bf-3622-4672-80e9-ee4d1c12c74a
 spec:
   gateways:
     - mesh
@@ -555,8 +553,6 @@ metadata:
       time: '2023-07-31T00:58:36Z'
   name: web-ingress
   namespace: default
-  resourceVersion: '86637'
-  uid: a64133f4-13d8-4f5e-85a1-1a4a06791d38
 spec:
   ingressClassName: nginx
   rules:
@@ -619,8 +615,6 @@ metadata:
       kind: Deployment
       name: web
       uid: ea0334a3-b5b4-4787-a11a-236aa57cf413
-  resourceVersion: '86270'
-  uid: 9f617475-e1d0-4c85-a778-6a70507674d8
 spec:
   clusterIP: 172.20.50.243
   clusterIPs:
