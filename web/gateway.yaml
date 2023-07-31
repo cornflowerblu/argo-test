@@ -71,21 +71,21 @@ spec:
     - name: "v1/v2 routes"
       match:
       - uri:
-        prefix: "/"
+          prefix: "/"
         headers:
-          cookie: 
-            regex: ^(.\*?;)?(service=alpha)(;.\*)?$ 
+          response:
+            cookie: 
+              regex: ^(.\*?;)?(service=alpha)(;.\*)?$ 
       route:
       - destination:
           host: web-alpha.default.svc.cluster.local
           port:
             number: 80
-      - uri:
-        prefix: "/"
       - destination:
           host: web-release.default.svc.cluster.local
           port:
             number: 80
+        weight: 100
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
