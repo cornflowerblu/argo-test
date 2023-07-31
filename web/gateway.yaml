@@ -1,0 +1,132 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: web-route-internal
+  namespace: internal
+spec:
+  hosts:
+  - apache.itsovertime.com
+  exportTo:
+  - "."
+  gateways:
+    - mesh
+  http:
+  - name: "v1-route"
+    match:
+    - uri:
+        prefix: "/v2"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        host: web-internal.default.svc.cluster.local
+        port:
+          number: 80
+      headers:
+        response:
+          add:
+            set-cookie: "my-site-version=2; HttpOnly; Path=/"      
+  - name: "v2-route"
+    match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: web.release.svc.cluster.local
+        port:
+          number: 80
+      headers:
+        response:
+          add:
+            set-cookie: "my-site-version=1; HttpOnly; Path=/"          
+  - name: "v3-route"
+    match:
+    - uri:
+        prefix: "/"
+    - headers:
+        response:
+          add:
+            set-cookie: "error=true"
+        cookie:
+          regex: ^(.\*?;)?(error=true)(;.\*)?$
+    directResponse:
+      status: 503
+      body:
+        string: "unknown error"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: web-routes-alpha
+  namespace: alpha
+spec:
+  hosts:
+  - apache.itsovertime.com
+  exportTo:
+  - "."  
+  gateways:
+    - mesh
+  http:
+    - name: "v1/v2 routes"
+      match:
+        headers:
+          cookie: 
+            regex: ^(.\*?;)?(service=alpha)(;.\*)?$ 
+      route:
+      - destination:
+          host: web-alpha.default.svc.cluster.local
+          port:
+            number: 80
+      - uri:
+        prefix: "/"
+      - destination:
+          host: web-release.default.svc.cluster.local
+          port:
+            number: 80
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: web-routes-beta
+  namespace: beta
+spec:
+  hosts:
+  - apache.itsovertime.com
+  exportTo:
+  - "."    
+  gateways:
+    - mesh
+  http:
+    - name: "v1/v2 routes"
+      route:
+      - destination:
+          host: web-beta.default.svc.cluster.local
+          port:
+            number: 80
+        weight: 50  
+      - destination:
+          host: web-release.default.svc.cluster.local
+          port:
+            number: 80
+        weight: 50
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: web-routes-production
+  namespace: release
+spec:
+  hosts:
+  - apache.itsovertime.com
+  exportTo:
+  - "."    
+  gateways:
+    - mesh
+  http:
+    - name: "v1/v2 routes"
+      route:
+      - destination:
+          host: web-release.default.svc.cluster.local
+          port:
+            number: 80
