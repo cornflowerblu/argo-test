@@ -451,57 +451,29 @@ status:
   qosClass: Burstable
   startTime: '2023-07-31T00:57:35Z'
 ---
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: web-route
+  name: web-routes-weighted
   namespace: default
 spec:
+  hosts:
+  - apache.itsovertime.com
   gateways:
     - mesh
-  hosts:
-    - apache.itsovertime.com
   http:
-    - match:
-        - uri:
-            prefix: /v2
-      name: v1-route
-      rewrite:
-        uri: /
+    - name: "v1/v2 routes"
       route:
-        - destination:
-            host: web2.default.svc.cluster.local
-            port:
-              number: 80
-          headers:
-            response:
-              add:
-                set-cookie: my-site-version=2; HttpOnly; Path=/
-    - match:
-        - uri:
-            prefix: /
-      name: v2-route
-      route:
-        - destination:
-            host: web.default.svc.cluster.local
-            port:
-              number: 80
-          headers:
-            response:
-              add:
-                set-cookie: my-site-version=1; HttpOnly; Path=/
-    - directResponse:
-        body:
-          string: unknown error
-        status: 503
-      match:
-        - uri:
-            prefix: /
-        - headers:
-            cookie:
-              regex: ^(.\*?;)?(error=true)(;.\*)?$
-            response: {}
-      name: v3-route
+      - destination:
+          host: web.default.svc.cluster.local
+          port:
+            number: 80
+        weight: 50  
+      - destination:
+          host: web2.default.svc.cluster.local
+          port:
+            number: 80
+        weight: 50
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
